@@ -2,24 +2,28 @@
 
 import socket
 
-HOST, PORT = "127.0.0.1", 3000
+errcodes = {b"200": "OK", b"202": "Confirmed None"}
 
-identifier = "Id3n713r"
+def client(HOST, PORT, IDENTIFIER):
+    sdata = ""
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.connect((HOST, PORT))
+        s.sendall(IDENTIFIER.encode())
+        while sdata != b"exit":
+            com = input("==> ")
+            if not com:
+                com = "None"
+            if com == "exit":
+                break
 
-IPv4 = socket.AF_INET
-TCP = socket.SOCK_STREAM
+            sdata = "{};{}".format(IDENTIFIER, com)
+            s.sendall(sdata.encode())
 
-sdata = ""
-
-with socket.socket(IPv4, TCP) as s:
-    s.connect((HOST, PORT))
-    s.sendall(identifier.encode())
-    while sdata != b"exit":
-        com = input("==> ")
-        if not com:
-            com = "None"
-
-        sdata = str(len(identifier)) + identifier + str(len(com)) + com
-
-        s.sendall(sdata.encode())
-        
+            responseCode = s.recv(1024)
+            print(
+                "{} - {}".format(
+                    responseCode,
+                    errcodes[responseCode] if responseCode in errcodes.keys() else "Unknown Error Code!"
+                )
+            )
+            

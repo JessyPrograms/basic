@@ -24,11 +24,11 @@ def Server(HOST, PORT):
 
                 if not data:
                     break
-
+                    
                 # sdata = response code
                 sdata = ServerParser.parse(data)
 
                 if sdata != None:
-                    conn.sendall(sdata)
+                    conn.sendall(sdata.encode())
     print("Connection Disconnected!")
     return
