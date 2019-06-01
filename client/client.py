@@ -2,7 +2,13 @@
 
 import socket
 
-errcodes = {b"200": "OK", b"202": "Confirmed None"}
+errcodes = {
+#    Code : Description
+    b"200": "OK",
+    b"202": "Confirmed None",
+    b"300": "3XX, XX represents no. of invalid commands.",
+    b"404": "There was an unknown error.",
+    }
 
 def client(HOST, PORT, IDENTIFIER):
     sdata = ""
@@ -19,11 +25,20 @@ def client(HOST, PORT, IDENTIFIER):
             sdata = "{};{}".format(IDENTIFIER, com)
             s.sendall(sdata.encode())
 
-            responseCode = s.recv(1024)
-            print(
-                "{} - {}".format(
-                    responseCode,
-                    errcodes[responseCode] if responseCode in errcodes.keys() else "Unknown Error Code!"
-                )
-            )
+            realCode = s.recv(1024)
+            try:
+                if int(realCode) >= 300 and int(realCode) < 400:
+                    checkCode = b"300"
+                else:
+                    checkCode = realCode
+            except ValueError:
+                realcode = b"404"
+                checkCode = b"404"
+            finally:
+                print("{} - {}".format(
+                    realCode,
+                    errcodes[checkCode] if checkCode in errcodes.keys() else "Unknown Error Code!"
+                ))
+            
+            
             
