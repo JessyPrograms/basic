@@ -11,8 +11,7 @@ sdata = ""
 
 with socket.socket(IPv4, TCP) as s:
     s.connect((HOST, PORT))
-    while sdata != "exit":
+    while sdata != b"exit":
         sdata = input("==> ").encode()
         s.sendall(sdata)
         data = s.recv(1024)
-        print(data)

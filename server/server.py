@@ -1,15 +1,18 @@
 #!/usr/bin/env python3
 
 import socket
+import importlib
+import ServerParse
 
 HOST = '127.0.0.1' # localhost
 PORT = 3000 # port to listen on
+SERVER = (HOST, PORT)
 
 IPv4 = socket.AF_INET
 TCP = socket.SOCK_STREAM
 
 with socket.socket(IPv4, TCP) as s:
-    s.bind((HOST, PORT))
+    s.bind(SERVER)
     s.listen()
     print("Listening on {}:{}".format(HOST, PORT))
     conn, addr = s.accept()
