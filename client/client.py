@@ -4,6 +4,8 @@ import socket
 
 HOST, PORT = "127.0.0.1", 3000
 
+identifier = "Id3n713r".encode()
+
 IPv4 = socket.AF_INET
 TCP = socket.SOCK_STREAM
 
@@ -11,7 +13,13 @@ sdata = ""
 
 with socket.socket(IPv4, TCP) as s:
     s.connect((HOST, PORT))
+    s.sendall(identifier)
     while sdata != b"exit":
-        sdata = input("==> ").encode()
-        s.sendall(sdata)
-        data = s.recv(1024)
+        com = input("==> ")
+        if not com:
+            com = "None"
+
+        sdata = len(identifier) + ";" + identifier + ";" + len(com) + ";" + com
+
+        s.sendall(sdata.encode())
+        
