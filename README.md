@@ -1,3 +1,7 @@
 # basic
 
-In this repsitiory i am first learning how the socket module in python works, then i am finding out how to use git effectivly, as i have never used it properly before.
+In this repositiory i am:
+
+1. learning how to use git effectivly
+2. learning the python socket module
+3. other things later down the line
