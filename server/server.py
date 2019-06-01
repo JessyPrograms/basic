@@ -19,6 +19,6 @@ with socket.socket(IPv4, TCP) as s:
             data = conn.recv(1024)
             if not data:
                 break
-            print("Data received. size = {}".format(len(data)))
+            print("Received from {} = Data Size: {}, Data[:12]: {}".format(addr[0], len(data), data[:12]))
             conn.sendall(data)
     print("Connection Disconnected!")
