@@ -1,4 +1,3 @@
-
 class parser():
     """ Simple parser for server side data """
     def __init__(self, *args, **kwargs):
