@@ -3,7 +3,7 @@
 # imports
 import socket
 import importlib
-from server import ServerParser
+import ServerParser
 
 
 # server info
@@ -33,11 +33,23 @@ with socket.socket(IPv4, TCP) as s:
         print("Connection at {}!".format(addr[0]))
         
         while True:
+            print("\nreload parser")
             importlib.reload(ServerParser)
+            
+            print("get data")
             data = conn.recv(1024)
+
+            print("return if no conn")
+            if not data:
+                break
+
+            print("parse data")
             sdata = ServerParser.parse(data)
 
+            print("check if something is needed")
             if sdata != None:
                 conn.sendall(sdata)
+
+
 
     print("Connection Disconnected!")
