@@ -7,7 +7,8 @@ errcodes = {
     b"200": "OK",
     b"202": "Confirmed None",
     b"300": "3XX, XX represents no. of invalid commands.",
-    b"404": "There was an unknown error.",
+    b"404": "Result not found",
+    b"500": "There was an unknown error.",
     }
 
 def client(HOST, PORT, IDENTIFIER):
