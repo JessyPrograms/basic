@@ -18,12 +18,16 @@ def Server(HOST, PORT):
             while True:
                 data = conn.recv(1024)
                 if not data:
-                    conn.sendall(b"404")
+                    break
                     
                 importlib.reload(ServerParser)
                 sdata = ServerParser.parse(data)
 
                 if sdata != None:
-                    conn.sendall(sdata.encode())
+                    try:
+                        conn.sendall(sdata.encode())
+                    except :
+                        print("invalid something in sendall - server")
+                    
     print("Connection Disconnected!")
     return

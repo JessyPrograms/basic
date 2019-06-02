@@ -18,6 +18,36 @@ def openIDindex():
 
 IDindex = openIDindex()
 
+def genPacket(DATA, ERRS):
+    """
+        returns a structured packet to send to client\n
+        DATA:ERRS\n
+        code,result;code,result:code,result\n
+        result is space seperated
+    """
+    # searcha yes,test hello,searcha no -- test data
+    sdata = ""
+    if len(DATA) >= 1:
+        for i in DATA:
+            datadelist = " ".join(i[1])
+            sdata += "{},{};".format(i[0], "".join(datadelist))
+        sdata = sdata[:-1]
+    else:
+        sdata += "202,None"
+    sdata += ":"
+    if len(ERRS) >= 1:
+        for i in ERRS:
+            # ['300', ['test', ['hello']]]
+            i[1][1] = " ".join(i[1][1])
+            i[1] = " ".join(i[1])
+            sdata += "{},{};".format(i[0], i[1])
+        sdata = sdata[:-1]
+    else:
+        sdata += "202,None"
+    return sdata
+
+
+
 
 def parse(DATA):
     """
@@ -33,22 +63,32 @@ def parse(DATA):
         b"searchf": "Search by file name."
         }
 
+    stopexc = False
+    results = []
+    incrctfunc = []
+   
+
     if payload == b"None":
-        return "202"
+        stopexc = True
 
-    payload = payload.split(b",")
 
-    err = 0
-    for command in payload:
-        func = command.split(b" ")[0].lower() # gets the function
-        arguments = [arg.lower() for arg in command.split(b" ")[1:]]
-        print("func: {}, args: {}".format(func, arguments))
-        if func not in commands.keys():
-            err += 1
-        else:
-            code = commands[func][0](arguments)
-            return "200" if code == None else "404"
-    return ("200" if err == 0 else str(300 + err))
+    if not stopexc:
+        payload = payload.split(b",")
+
+        err = 0
+
+        for command in payload:
+            func = command.split(b" ")[0].lower() # gets the function
+            arguments = [arg.lower() for arg in command.split(b" ")[1:]]
+            # print("func: {}, args: {}".format(func, arguments))
+            if func not in commands.keys():
+                err += 1
+                incrctfunc.append(["300", [func.decode(), [i.decode() for i in arguments]]])
+            else:
+                # must return a list [responseCode, result]
+                results.append(commands[func][0](arguments))
+    return genPacket(results, incrctfunc)
+    
 
 
 def search(asf, name):
@@ -58,14 +98,13 @@ def search(asf, name):
     """
     if asf < 0 or asf >=4:
         print("Invalid ASF")
-        return b"404"
+        return ["500", ["None"]]
 
-    
     for i in IDindex:
         # print("{} {} {}".format(i[asf], "=" if i[asf] == name else "!=", name))
         if i[asf] == name:
-            return i
-    return b"404"
+            return ["200", i]
+    return ["404", ["Not Found"]]
             
 
 
@@ -78,11 +117,6 @@ def SearchA(ArtistName):
     # 5th_dimension-one_less_bell_to_answer	TRVZZOL12519AA54F9 -- example line
     # ["5th_dimension", "one_less_bell_to_answer", "TRVZZOL12519AA54F9"] -- example parsed line
     ArtistName = ArtistName[0].decode()
-
     searchResult = search(int(0), ArtistName)
-
-    if type(searchResult) == bytes:
-        return str(searchResult)
-
-    print("Results = " + str(searchResult))
+    return searchResult
         
