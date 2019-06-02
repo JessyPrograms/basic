@@ -11,19 +11,17 @@ errcodes = {
     b"500": "There was an unknown error.",
     }
 
-def client(HOST, PORT, IDENTIFIER):
+def client(HOST, PORT):
     sdata = ""
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.connect((HOST, PORT))
-        s.sendall(IDENTIFIER.encode())
         while sdata != b"exit":
-            com = input("==> ")
-            if not com:
-                com = "None"
-            if com == "exit":
+            sdata = input("==> ")
+            if not sdata:
+                sdata = "None"
+            if sdata == "exit":
                 break
 
-            sdata = "{};{}".format(IDENTIFIER, com)
             s.sendall(sdata.encode())
 
             realCode = s.recv(1024)

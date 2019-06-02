@@ -24,9 +24,7 @@ def parse(DATA):
         Parser function for parsing data sent from client
     """
 
-    DATA = DATA.split(b";")
-    clientID = DATA[0]
-    payload = DATA[1]
+    payload = DATA
 
     commands = {
 #        Command  : Description
@@ -34,8 +32,6 @@ def parse(DATA):
         b"searchs": "Search by song name.",
         b"searchf": "Search by file name."
         }
-
-    print("ID: {}, Payload: {}".format(clientID, payload))
 
     if payload == b"None":
         return "202"
@@ -66,13 +62,7 @@ def search(asf, name):
 
     
     for i in IDindex:
-        print(
-            "{} {} {}".format(
-                i[asf],
-                "=" if i[asf] == name else "!=",
-                name
-            )
-        )
+        # print("{} {} {}".format(i[asf], "=" if i[asf] == name else "!=", name))
         if i[asf] == name:
             return i
     return b"404"
